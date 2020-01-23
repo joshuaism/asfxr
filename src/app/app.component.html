@@ -179,5 +179,10 @@
 		</label>
   </fieldset>
   <a [attr.href]="wav" download="export.wav">export</a>
+  <br />
+  <div *ngFor="let descriptor of descriptorList">
+	  <button type="button" (click)="resetDescriptor(descriptor)">{{descriptor.time}} {{descriptor.type}}</button>
+	  <br />
+  </div>
 </body>
 </html>

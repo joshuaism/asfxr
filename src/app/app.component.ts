@@ -12,6 +12,7 @@ import { DomSanitizer } from '@angular/platform-browser';
 export class AppComponent {
 	title = 'asfxr - Sound Effects Generator';
 	subscription: Subscription;
+	descriptorList = [];
 	wav;
 
 	constructor(private sanitizer: DomSanitizer) { }
@@ -21,39 +22,57 @@ export class AppComponent {
 			key = key.toLowerCase();
 			this.onGeneratorClick(key);
 		});
-		this.saveAudio();
+		this.saveAudio(currentDescriptor);
 	}
 
 	ngOnDestroy() {
 		this.subscription.unsubscribe();
 	}
 
+	resetDescriptor(val) {
+		this.playDescriptor(val.descriptor);
+		updateUI(val.descriptor);
+		this.saveAudio(val.descriptor);
+	}
+
+	addToDescriptorList(desc: Descriptor) {
+		var now = new Date();
+		var time = now.getHours() + ":" + now.getMinutes() + ":" + now.getSeconds() + "." + now.getMilliseconds();
+		var type = "";
+		switch(desc.wave_type) {
+			case 0: type = "Squarewave"; break;
+			case 1: type = "Sawtooth"; break;
+			case 2: type = "Sine"; break;
+			case 3: type = "Noise"; break;
+		}
+		this.descriptorList.push({time: time, descriptor: desc, type: type});
+	}
+
 	onGeneratorClick(gen: string) {
 		gen = gen.toLowerCase();
 		switch (gen) {
-			case 'c': setDescriptor(pickupCoin()); break;
-			case 'l': setDescriptor(laserShoot()); break;
-			case 'e': setDescriptor(explosion()); break;
-			case 'p': setDescriptor(powerup()); break;
-			case 'h': setDescriptor(hitHurt()); break;
-			case 'j': setDescriptor(jump()); break;
-			case 'b': setDescriptor(blipSelect()); break;
-			case 't': setDescriptor(tone()); break;
-			case 'r': setDescriptor(randomize()); break;
-			case 'm': setDescriptor(mutate(currentDescriptor)); break;
-			case 'a': playDescriptor(currentDescriptor); break;
+			case 'c': this.setDescriptor(pickupCoin()); break;
+			case 'l': this.setDescriptor(laserShoot()); break;
+			case 'e': this.setDescriptor(explosion()); break;
+			case 'p': this.setDescriptor(powerup()); break;
+			case 'h': this.setDescriptor(hitHurt()); break;
+			case 'j': this.setDescriptor(jump()); break;
+			case 'b': this.setDescriptor(blipSelect()); break;
+			case 't': this.setDescriptor(tone()); break;
+			case 'r': this.setDescriptor(randomize()); break;
+			case 'm': this.setDescriptor(mutate(currentDescriptor)); break;
+			case 'a': this.playDescriptor(currentDescriptor); break;
 			case '1':
 			case '2':
 			case '3':
 			case '4': this.setWaveTypeAndUI(parseInt(gen, 10)); break;
 		}
-		this.saveAudio();
 	}
 
-	saveAudio() {
-		var samples = synthesizeSamples(currentDescriptor);
+	saveAudio(desc: Descriptor) {
+		var samples = synthesizeSamples(desc);
 		const ctx = new AudioContext();
-		const buffer = ctx.createBuffer(2, samples.length, wav_freq);
+		const buffer = ctx.createBuffer(1, samples.length, wav_freq);
 		const data = buffer.getChannelData(0);
 
 		for (let i = 0; i < samples.length; i++) {
@@ -71,15 +90,14 @@ export class AppComponent {
 	setWaveTypeAndUI(value: number) {
 		let desc = makeDescriptor(currentDescriptor);
 		this.setWaveType(value, desc);
-		setDescriptor(desc, true);
+		this.setDescriptor(desc, true);
 	}
 
 	onWaveTypeClick(event: MouseEvent) {
 		const target = <HTMLInputElement>event.target;
 		let desc = makeDescriptor(currentDescriptor);
 		this.setWaveType(parseInt(target.value, 10), desc);
-		setDescriptor(desc, false);
-		this.saveAudio();
+		this.setDescriptor(desc, false);
 	}
 
 	setWaveType(val: number, desc: Descriptor) {
@@ -95,23 +113,37 @@ export class AppComponent {
 		const target = <HTMLInputElement>event.target;
 		let desc = makeDescriptor(currentDescriptor);
 		desc[target.name] = +target.value;
-		setDescriptor(desc, false);
-		this.saveAudio();
+		this.setDescriptor(desc, false);
 	};
 
 	onWaveFrequencyClick(event: MouseEvent) {
 		const target = <HTMLInputElement>event.target;
 		wav_freq = parseInt(target.value, 10);
-		setDescriptor(currentDescriptor, false);
-		this.saveAudio();
+		this.setDescriptor(currentDescriptor, false);
 	};
 
 	onWaveBitsClick(event: MouseEvent) {
 		const target = <HTMLInputElement>event.target;
 		wav_bits = parseInt(target.value, 10);
-		setDescriptor(currentDescriptor, false);
-		this.saveAudio();
+		this.setDescriptor(currentDescriptor, false);
 	};
+
+	setDescriptor(desc: Descriptor, shouldUpdateUI = true) {
+		currentDescriptor = desc;
+		this.playDescriptor(desc);
+	
+		if (shouldUpdateUI) {
+			updateUI(desc);
+		  }
+		this.addToDescriptorList(currentDescriptor);
+	  	console.log(currentDescriptor);
+	}
+
+	playDescriptor(desc: Descriptor) {
+		const samples = synthesizeSamples(desc);
+		playSamples(samples, wav_freq);
+		this.saveAudio(desc);
+	}
 }
 
 function getInputElementById(id: string) {
@@ -122,24 +154,10 @@ var wav_bits = 16;
 var wav_freq = 44100;
 var currentDescriptor = makeDescriptor();
 
-function setDescriptor(desc: Descriptor, shouldUpdateUI = true) {
-	currentDescriptor = desc;
-	playDescriptor(desc);
-
-	if (shouldUpdateUI) {
-		updateUI(desc);
-  }
-  console.log(currentDescriptor);
-}
 
 document.addEventListener('DOMContentLoaded', function() {
 	updateUI(currentDescriptor);
 })
-
-function playDescriptor(desc: Descriptor) {
-	const samples = synthesizeSamples(desc);
-	playSamples(samples, wav_freq);
-}
 
 function playSamples(samples: Array<number>, sampleRate: number) {
 	const ctx = new AudioContext();
