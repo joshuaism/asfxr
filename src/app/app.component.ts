@@ -30,6 +30,7 @@ export class AppComponent {
 	}
 
 	resetDescriptor(val) {
+		currentDescriptor = val.descriptor;
 		this.playDescriptor(val.descriptor);
 		updateUI(val.descriptor);
 		this.saveAudio(val.descriptor);
