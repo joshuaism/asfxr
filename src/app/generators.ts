@@ -12,8 +12,8 @@ function pick(choices: Array<any>) {
 	return choices[Math.floor(Math.random() * choices.length)];
 }
 
-export function pickupCoin() {
-	let desc = makeDescriptor();
+export function pickupCoin(params?) {
+	let desc = makeDescriptor(params);
 
 	desc.p_base_freq = 0.4 + frnd(0.5);
 	desc.p_env_attack = 0.0;
@@ -29,8 +29,8 @@ export function pickupCoin() {
 	return desc;
 }
 
-export function laserShoot() {
-	let desc = makeDescriptor();
+export function laserShoot(params?) {
+	let desc = makeDescriptor(params);
 
 	desc.wave_type = pick([Shape.Square, Shape.Sawtooth, Shape.Sine]);
 
@@ -81,8 +81,8 @@ export function laserShoot() {
 	return desc;
 }
 
-export function explosion() {
-	let desc = makeDescriptor();
+export function explosion(params?) {
+	let desc = makeDescriptor(params);
 
 	desc.wave_type = Shape.Noise;
 
@@ -128,8 +128,8 @@ export function explosion() {
 	return desc;
 }
 
-export function powerup() {
-	let desc = makeDescriptor();
+export function powerup(params?) {
+	let desc = makeDescriptor(params);
 
 	if (rnd(1)) {
 		desc.wave_type = Shape.Sawtooth;
@@ -160,8 +160,8 @@ export function powerup() {
 	return desc;
 }
 
-export function hitHurt() {
-	let desc = makeDescriptor();
+export function hitHurt(params?) {
+	let desc = makeDescriptor(params);
 
 	desc.wave_type = pick([Shape.Square, Shape.Sawtooth, Shape.Noise]);
 
@@ -182,8 +182,8 @@ export function hitHurt() {
 	return desc;
 }
 
-export function jump() {
-	let desc = makeDescriptor();
+export function jump(params?) {
+	let desc = makeDescriptor(params);
 
 	desc.wave_type = Shape.Square;
 	desc.p_duty = frnd(0.6);
@@ -204,8 +204,8 @@ export function jump() {
 	return desc;
 }
 
-export function blipSelect() {
-	let desc = makeDescriptor();
+export function blipSelect(params?) {
+	let desc = makeDescriptor(params);
 
 	desc.wave_type = rnd(1);
 
@@ -222,8 +222,8 @@ export function blipSelect() {
 	return desc;
 }
 
-export function tone() {
-	let desc = makeDescriptor();
+export function tone(params?) {
+	let desc = makeDescriptor(params);
 
 	desc.wave_type = Shape.Sine;
 	desc.p_base_freq = 0.24 + frnd(0.5);
@@ -234,8 +234,8 @@ export function tone() {
     return desc;
 }
 
-export function randomize() {
-	let desc = makeDescriptor();
+export function randomize(params?) {
+	let desc = makeDescriptor(params);
 
 	desc.p_base_freq = Math.pow(frnd(2.0) - 1.0, 2.0);
 

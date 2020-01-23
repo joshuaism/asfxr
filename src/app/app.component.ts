@@ -51,16 +51,17 @@ export class AppComponent {
 
 	onGeneratorClick(gen: string) {
 		gen = gen.toLowerCase();
+		var params = {sound_vol: currentDescriptor.sound_vol};
 		switch (gen) {
-			case 'c': this.setDescriptor(pickupCoin()); break;
-			case 'l': this.setDescriptor(laserShoot()); break;
-			case 'e': this.setDescriptor(explosion()); break;
-			case 'p': this.setDescriptor(powerup()); break;
-			case 'h': this.setDescriptor(hitHurt()); break;
-			case 'j': this.setDescriptor(jump()); break;
-			case 'b': this.setDescriptor(blipSelect()); break;
-			case 't': this.setDescriptor(tone()); break;
-			case 'r': this.setDescriptor(randomize()); break;
+			case 'c': this.setDescriptor(pickupCoin(params)); break;
+			case 'l': this.setDescriptor(laserShoot(params)); break;
+			case 'e': this.setDescriptor(explosion(params)); break;
+			case 'p': this.setDescriptor(powerup(params)); break;
+			case 'h': this.setDescriptor(hitHurt(params)); break;
+			case 'j': this.setDescriptor(jump(params)); break;
+			case 'b': this.setDescriptor(blipSelect(params)); break;
+			case 't': this.setDescriptor(tone(params)); break;
+			case 'r': this.setDescriptor(randomize(params)); break;
 			case 'm': this.setDescriptor(mutate(currentDescriptor)); break;
 			case 'a': this.playDescriptor(currentDescriptor); break;
 			case '1':
