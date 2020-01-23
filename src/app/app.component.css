@@ -1,0 +1,25 @@
+.column {
+    float: left;
+}
+
+.row {
+    width:900px;
+    margin: auto;
+}
+  
+/* Clear floats after the columns */
+.row:after {
+    content: "";
+    display: table;
+    clear: both;
+}
+
+.generators button {
+    display: block;
+    width:150px;
+}
+
+.descriptors button {
+    display: block;
+    width: 200px;
+}
